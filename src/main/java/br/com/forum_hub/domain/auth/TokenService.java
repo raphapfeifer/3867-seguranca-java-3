@@ -14,17 +14,16 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 
 @Service
 public class TokenService {
 
-    @Value("${spring.user.password}")
-    private String password;
+    @Value("${spring.user.secret}")
+    private String secret;
 
     public String generateToken(Usuario usuario){
        try{
-           Algorithm algorithm = Algorithm.HMAC256(password);
+           Algorithm algorithm = Algorithm.HMAC256(secret);
            return  JWT.create()
                    .withIssuer("Forum Hub")
                    .withSubject(usuario.getUsername())
@@ -42,7 +41,7 @@ public class TokenService {
     public String verifyToken(String token) {
         DecodedJWT decoadedJWT;
         try {
-            Algorithm algorithm = Algorithm.HMAC256(password);
+            Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer("Forum Hub")
                     .build();
@@ -51,6 +50,19 @@ public class TokenService {
             return decoadedJWT.getSubject();
         } catch (JWTVerificationException ex) {
             throw new RegraDeNegocioException("An error with token validation");
+        }
+    }
+
+    public String generateRefreshToken(Usuario usuario) {
+        try{
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return  JWT.create()
+                    .withIssuer("Forum Hub")
+                    .withSubject(usuario.getId().toString())
+                    .withExpiresAt(expires(120))
+                    .sign(algorithm);
+        }catch (JWTCreationException ex) {
+            throw new RegraDeNegocioException("Error when try to generate token");
         }
     }
 }
