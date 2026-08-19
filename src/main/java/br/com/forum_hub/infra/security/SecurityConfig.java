@@ -28,7 +28,7 @@ public class SecurityConfig {
     public SecurityFilterChain filter(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(req -> {
-                            req.requestMatchers("/login").permitAll();
+                            req.requestMatchers("/login", "/update-token").permitAll();
                             req.anyRequest().authenticated();
                         }
                 )
