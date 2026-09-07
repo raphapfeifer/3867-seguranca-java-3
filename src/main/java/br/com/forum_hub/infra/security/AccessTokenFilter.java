@@ -31,7 +31,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
         if(token != null){
             String username = service.verifyToken(token);
-            Usuario user = repository.findByEmailIgnoreCase(username).orElseThrow();
+            Usuario user = repository.findByEmailIgnoreCaseAndVerificadoTrue(username).orElseThrow();
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
