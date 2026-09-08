@@ -59,4 +59,24 @@ public class UsuarioService implements UserDetailsService{
         return usuarioRepository.getByNomeUsuario(nomeUsuario)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario não foi encontrado"));
     }
+
+    public Usuario updateUser(@Valid DadosEdicaoUsuario dados,
+                              Usuario usuario) {
+        usuario.updateUser(dados);
+        return usuarioRepository.saveAndFlush(usuario);
+    }
+
+    public void updatePassword(DadosAlteracaoSenha dados, Usuario logado) {
+        if(!encoder.matches(dados.currentPassword(), logado.getPassword())){
+            throw new RegraDeNegocioException("Senha digitada não confere com a senha atual");
+        }
+
+        if(!dados.newPassword().equals(dados.newPasswordConfirm())){
+            throw new RegraDeNegocioException("Senha e confirmação não conferem!");
+        }
+
+        var passwordEncoded = encoder.encode(dados.newPassword());
+        logado.updatePassword(passwordEncoded);
+        usuarioRepository.saveAndFlush(logado);
+    }
 }

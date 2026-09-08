@@ -90,4 +90,24 @@ public class Usuario implements UserDetails {
         this.token = null;
         this.expiracaoToken = null;
     }
+
+    public Usuario updateUser(@Valid DadosEdicaoUsuario dados) {
+        if(dados.nomeUsuario() != null){
+            this.nomeUsuario = dados.nomeUsuario();
+        }
+
+        if(dados.biografia() != null){
+            this.biografia = dados.biografia();
+        }
+
+        if(dados.miniBiografia() != null){
+            this.miniBiografia = dados.miniBiografia();
+        }
+
+        return this;
+    }
+
+    public void updatePassword(String encodedPassword){
+        this.senha = encodedPassword;
+    }
 }

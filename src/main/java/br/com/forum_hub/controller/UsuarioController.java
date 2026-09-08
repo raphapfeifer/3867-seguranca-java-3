@@ -1,12 +1,12 @@
 package br.com.forum_hub.controller;
 
-import br.com.forum_hub.domain.usuario.DadosCadastroUsuario;
-import br.com.forum_hub.domain.usuario.DadosListagemUsuario;
-import br.com.forum_hub.domain.usuario.UsuarioService;
+import br.com.forum_hub.domain.resposta.DadosListagemResposta;
+import br.com.forum_hub.domain.usuario.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,6 +37,19 @@ public class UsuarioController {
         return ResponseEntity.ok("Conta verficada com sucesso");
     }
 
+    @PutMapping("/editar-perfil")
+    public ResponseEntity<DadosListagemUsuario> updateUser(@RequestBody @Valid DadosEdicaoUsuario dados,
+                                                           @AuthenticationPrincipal Usuario logado){
+        var usuario = service.updateUser(dados,logado);
+        return ResponseEntity.ok().body(new DadosListagemUsuario(usuario));
+    }
+
+    @PatchMapping("/alterar-senha")
+    public ResponseEntity<String> updatePassword(@RequestBody @Valid DadosAlteracaoSenha dados,
+                                               @AuthenticationPrincipal Usuario logado){
+        service.updatePassword(dados,logado);
+        return ResponseEntity.ok("Senha alterada");
+    }
 
     @DeleteMapping("/deletar-usuario")
     public ResponseEntity<String> deletar(@RequestParam Long id){
