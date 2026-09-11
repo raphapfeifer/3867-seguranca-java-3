@@ -79,4 +79,13 @@ public class UsuarioService implements UserDetailsService{
         logado.updatePassword(passwordEncoded);
         usuarioRepository.saveAndFlush(logado);
     }
+
+    public Usuario changeUserStatus(Long id, Boolean ativo) {
+       Usuario usuario = usuarioRepository.findById(id)
+               .orElseThrow(() -> new RegraDeNegocioException("Usuario não foi encontrado"));
+
+       usuario.changeUserStatus(ativo);
+
+       return usuarioRepository.saveAndFlush(usuario);
+    }
 }

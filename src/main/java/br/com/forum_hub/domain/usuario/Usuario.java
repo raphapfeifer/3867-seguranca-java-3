@@ -27,6 +27,7 @@ public class Usuario implements UserDetails {
     private Boolean verificado;
     private String token;
     private LocalDateTime expiracaoToken;
+    private Boolean ativo;
 
     public Usuario(){}
 
@@ -40,6 +41,7 @@ public class Usuario implements UserDetails {
         this.verificado = false;
         this.token = UUID.randomUUID().toString();
         this.expiracaoToken = LocalDateTime.now().plusMinutes(30);
+        this.ativo = true;
     }
 
 
@@ -82,6 +84,10 @@ public class Usuario implements UserDetails {
         return token;
     }
 
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
     public void verficar() {
         if(expiracaoToken.isBefore(LocalDateTime.now())){
             throw new RegraDeNegocioException("link de verficação exepirou!");
@@ -109,5 +115,9 @@ public class Usuario implements UserDetails {
 
     public void updatePassword(String encodedPassword){
         this.senha = encodedPassword;
+    }
+
+    public void changeUserStatus(Boolean ativo) {
+      this.ativo = ativo ? true : false;
     }
 }

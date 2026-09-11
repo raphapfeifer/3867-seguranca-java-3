@@ -1,9 +1,7 @@
 package br.com.forum_hub.controller;
 
-import br.com.forum_hub.domain.resposta.DadosListagemResposta;
 import br.com.forum_hub.domain.usuario.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,6 +47,12 @@ public class UsuarioController {
                                                @AuthenticationPrincipal Usuario logado){
         service.updatePassword(dados,logado);
         return ResponseEntity.ok("Senha alterada");
+    }
+
+    @PatchMapping("/desativar")
+    public ResponseEntity<String> changeUserStatus(@RequestParam Long id, @RequestParam Boolean ativo){
+        Usuario usuario = service.changeUserStatus(id,ativo);
+        return ResponseEntity.ok("Status do usuário: " + (usuario.getAtivo() ? "Ativo" : "Desativado"));
     }
 
     @DeleteMapping("/deletar-usuario")
