@@ -1,5 +1,8 @@
 package br.com.forum_hub.domain.usuario;
 
+import br.com.forum_hub.domain.perfil.DadosPerfil;
+import br.com.forum_hub.domain.perfil.PerfilNameEnum;
+import br.com.forum_hub.domain.perfil.PerfilRepository;
 import br.com.forum_hub.infra.email.EmailService;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
 import jakarta.transaction.Transactional;
@@ -25,6 +28,9 @@ public class UsuarioService implements UserDetailsService{
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private PerfilRepository perfilRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return usuarioRepository.findByEmailIgnoreCaseAndVerificadoTrue(username)
@@ -40,7 +46,9 @@ public class UsuarioService implements UserDetailsService{
         }
 
         var passwordEncoded = encoder.encode(dados.password());
-        var usuario = new Usuario(dados, passwordEncoded);
+        var perfil = perfilRepository.findByName(PerfilNameEnum.ESTUDANTE);
+
+        var usuario = new Usuario(dados, passwordEncoded, perfil);
         emailService.enviarEmailVerificacao(usuario);
         return usuarioRepository.save(usuario);
     }
@@ -87,5 +95,12 @@ public class UsuarioService implements UserDetailsService{
        usuario.changeUserStatus(ativo);
 
        return usuarioRepository.saveAndFlush(usuario);
+    }
+
+    public Usuario addProfile(Long id, @Valid DadosPerfil dados) {
+        var usuario = usuarioRepository.findById(id).orElseThrow();
+        var perfil = perfilRepository.findByName(dados.perfilName());
+        usuario.addProfile(perfil);
+        return usuarioRepository.saveAndFlush(usuario);
     }
 }

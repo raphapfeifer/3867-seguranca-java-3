@@ -1,5 +1,6 @@
 package br.com.forum_hub.controller;
 
+import br.com.forum_hub.domain.perfil.DadosPerfil;
 import br.com.forum_hub.domain.usuario.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,12 @@ public class UsuarioController {
     public ResponseEntity<String> changeUserStatus(@RequestParam Long id, @RequestParam Boolean ativo){
         Usuario usuario = service.changeUserStatus(id,ativo);
         return ResponseEntity.ok("Status do usuário: " + (usuario.getAtivo() ? "Ativo" : "Desativado"));
+    }
+
+    @PatchMapping("adicionar-perfil/{id}")
+    public ResponseEntity<String> adicionarPerfil(@PathVariable Long id ,@RequestBody @Valid DadosPerfil dados){
+        var usuario = service.addProfile(id, dados);
+        return ResponseEntity.ok("Perfil adicionado: " + usuario.getAuthorities());
     }
 
     @DeleteMapping("/deletar-usuario")

@@ -11,10 +11,11 @@ public class Perfil implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private PerfilNomeEnum nome;
+    @Enumerated(EnumType.STRING)
+    private PerfilNameEnum name;
 
     @Override
     public String getAuthority() {
-        return "ROLE_" + nome;
+        return "ROLE_" + name;
     }
 }

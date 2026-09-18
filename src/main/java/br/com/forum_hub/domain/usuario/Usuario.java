@@ -1,7 +1,7 @@
 package br.com.forum_hub.domain.usuario;
 
 import br.com.forum_hub.domain.perfil.Perfil;
-import br.com.forum_hub.domain.perfil.PerfilNomeEnum;
+import br.com.forum_hub.domain.perfil.PerfilNameEnum;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -30,11 +31,17 @@ public class Usuario implements UserDetails {
     private String token;
     private LocalDateTime expiracaoToken;
     private Boolean ativo;
-    private List<Perfil> perfis;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "usuario_perfil", joinColumns = @JoinColumn(name = "usuario_id"),
+    inverseJoinColumns = @JoinColumn(name = "perfil_id"))
+    private List<Perfil> perfis = new ArrayList<>();
 
     public Usuario(){}
 
-    public Usuario(@Valid DadosCadastroUsuario dados, String passwordEncoded) {
+    public Usuario(@Valid DadosCadastroUsuario dados,
+                   String passwordEncoded,
+                   Perfil perfil) {
         this.nomeCompleto = dados.nomeCompleto();
         this.email = dados.email();
         this.senha = passwordEncoded;
@@ -45,6 +52,7 @@ public class Usuario implements UserDetails {
         this.token = UUID.randomUUID().toString();
         this.expiracaoToken = LocalDateTime.now().plusMinutes(30);
         this.ativo = true;
+        this.perfis.add(perfil);
     }
 
 
@@ -122,5 +130,9 @@ public class Usuario implements UserDetails {
 
     public void changeUserStatus(Boolean ativo) {
       this.ativo = ativo ? true : false;
+    }
+
+    public void addProfile(Perfil perfil) {
+        this.perfis.add(perfil);
     }
 }
