@@ -23,7 +23,7 @@ public class Resposta {
     private String mensagem;
 
     @ManyToOne
-    @JoinColumn(name = "autor_id")
+    @JoinColumn(name = "autor")
     private Usuario autor;
     private LocalDateTime dataCriacao;
     private Boolean solucao;

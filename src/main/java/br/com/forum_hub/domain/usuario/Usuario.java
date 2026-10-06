@@ -135,4 +135,8 @@ public class Usuario implements UserDetails {
     public void addProfile(Perfil perfil) {
         this.perfis.add(perfil);
     }
+
+    public void removeProfile(Perfil perfil) {
+        this.perfis.remove(perfil);
+    }
 }

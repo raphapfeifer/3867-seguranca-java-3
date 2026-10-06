@@ -35,7 +35,7 @@ public class RespostaService {
         topico.incrementarRespostas();
 
         var resposta = new Resposta(dados, topico, autor);
-        return repository.save(resposta);
+        return repository.saveAndFlush(resposta);
     }
 
     @Transactional

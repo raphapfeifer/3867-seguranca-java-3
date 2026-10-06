@@ -14,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -102,5 +105,21 @@ public class UsuarioService implements UserDetailsService{
         var perfil = perfilRepository.findByName(dados.perfilName());
         usuario.addProfile(perfil);
         return usuarioRepository.saveAndFlush(usuario);
+    }
+
+    public Usuario removeProfile(Long id, @Valid DadosPerfil dados) {
+        var usuario = usuarioRepository.findById(id).orElseThrow();
+        var perfil = perfilRepository.findByName(dados.perfilName());
+        usuario.removeProfile(perfil);
+        return usuarioRepository.saveAndFlush(usuario);
+    }
+
+    public List<DadosListagemUsuario> getUsuarios() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        List<DadosListagemUsuario> dados = new ArrayList<>();
+        usuarios.stream().forEach( u -> {
+                dados.add(new DadosListagemUsuario(u));
+        });
+        return dados;
     }
 }

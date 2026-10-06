@@ -9,6 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
 public class UsuarioController {
 
@@ -22,6 +24,12 @@ public class UsuarioController {
         var usuario = service.cadastrar(dados);
         var uri = uriComponentsBuilder.path("/{nomeUsuario}").buildAndExpand(usuario.getNomeUsuario()).toUri();
         return ResponseEntity.created(uri).body(new DadosListagemUsuario(usuario));
+    }
+
+    @GetMapping("/get-usuarios")
+    public ResponseEntity<List<DadosListagemUsuario>> getUsuarios(){
+        List<DadosListagemUsuario> usuarios = service.getUsuarios();
+        return ResponseEntity.ok(usuarios);
     }
 
     @GetMapping("/get-usuario")
@@ -60,6 +68,12 @@ public class UsuarioController {
     public ResponseEntity<String> adicionarPerfil(@PathVariable Long id ,@RequestBody @Valid DadosPerfil dados){
         var usuario = service.addProfile(id, dados);
         return ResponseEntity.ok("Perfil adicionado: " + usuario.getAuthorities());
+    }
+
+    @PatchMapping("remover-perfil/{id}")
+    public ResponseEntity<DadosListagemUsuario> removerPerfil(@PathVariable Long id, @RequestBody @Valid DadosPerfil dados){
+        var usuario = service.removeProfile(id,dados);
+        return ResponseEntity.ok().body(new DadosListagemUsuario(usuario));
     }
 
     @DeleteMapping("/deletar-usuario")
